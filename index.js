@@ -22,6 +22,7 @@ const app = express();
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
+    credentials: true,
   }),
 );
 app.use(express.json());
@@ -39,6 +40,5 @@ app.get("/", (req, res) => {
 app.use("/api/blogs", blogRouter);
 app.use("/user", userRouter);
 app.use("/api/file", fileRouter);
-app.use("/uploads", express.static("uploads"));
 
 app.listen(PORT, () => console.log(`Server Started at PORT: ${PORT}`));

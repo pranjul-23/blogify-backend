@@ -15,9 +15,12 @@ async function handleFileUpload(req, res) {
       filename: req.file.originalname,
       filepath: imageUrl,
     });
-    return res.status(201).json({ sucess: true, data: file });
+    return res.status(201).json({ success: true, data: file });
   } catch (error) {
-    return res.status(500).json({ sucess: false, message: error?.message });
+    return res.status(500).json({
+      success: false,
+      message: error?.message || "Something went wrong.",
+    });
   }
 }
 
