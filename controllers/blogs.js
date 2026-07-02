@@ -1,10 +1,14 @@
-const Blogs = require("../models/blogs");
+const Blog = require("../models/blogs");
 
 const handleGetAllBlogs = async (req, res) => {
   try {
-    const blogs = await Blogs.find({});
+    const blogs = await Blog.find({})
+      .populate("createdBy", "fullName profileImage")
+      .sort({ createdAt: -1 });
+
     return res.status(200).json({
       success: true,
+      message: "Blogs fetched successfully.",
       data: blogs,
     });
   } catch (error) {
@@ -38,15 +42,17 @@ const handleCreateBlog = async (req, res) => {
       errors.blogImage = ["Blog image is required"];
     }
 
-    const result = await Blogs.create({
+    const blog = await Blog.create({
       title,
       description,
       category,
       blogImage,
+      createdBy: req.user._id,
     });
     return res.status(201).json({
       success: true,
       message: "Blog created successfully.",
+      data: blog,
     });
   } catch (error) {
     console.error(error);
@@ -63,20 +69,31 @@ const handleGetBlogCategories = (req, res) => {
     { id: 2, name: "Technology" },
     { id: 3, name: "Lifestyle" },
   ];
-  return res.status(200).json({ success: true, data: categories });
+  return res.status(200).json({
+    success: true,
+    message: "Categories fetched successfully.",
+    data: categories,
+  });
 };
 
 const handleGetBlogByID = async (req, res) => {
   try {
-    const id = req.params.id;
-    const blog = await Blogs.findById(id);
+    const { id } = req.params;
+    const blog = await Blog.findById(id).populate(
+      "createdBy",
+      "fullName profileImage",
+    );
 
     if (!blog) {
       return res
         .status(401)
         .json({ success: false, message: "Blog not found" });
     }
-    return res.status(200).json({ success: true, data: blog });
+    return res.status(200).json({
+      success: true,
+      message: "Blog fetched successfully.",
+      data: blog,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -88,7 +105,7 @@ const handleGetBlogByID = async (req, res) => {
 
 const handleUpdateBlog = async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     const body = req.body;
     const { title, description, category, blogImage } = body;
     const errors = {};
@@ -109,7 +126,8 @@ const handleUpdateBlog = async (req, res) => {
       errors.blogImage = ["Blog image is required"];
     }
 
-    const blog = await Blogs.findById(id);
+    const blog = await Blog.findById(id);
+
     if (!blog) {
       return res.status(404).json({
         success: false,
@@ -125,6 +143,7 @@ const handleUpdateBlog = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "Blog updated successfully.",
+      data: blog,
     });
   } catch (error) {
     console.error(error);
@@ -135,10 +154,56 @@ const handleUpdateBlog = async (req, res) => {
   }
 };
 
+const handleDeleteBlog = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const blog = await Blog.findById(id);
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: "Blog not found",
+      });
+    }
+
+    await Blog.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Blog deleted successfully.",
+      data: null,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong.",
+    });
+  }
+};
+
+const handleGetMyBlogs = async (req, res) => {
+  try {
+    const blogs = await Blog.find({ createdBy: req.user._id }).sort({
+      createdAt: -1,
+    });
+    return res.status(200).json({
+      success: true,
+      message: "Blogs fetched successfully",
+      data: blogs,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   handleGetAllBlogs,
   handleCreateBlog,
   handleGetBlogCategories,
   handleGetBlogByID,
   handleUpdateBlog,
+  handleDeleteBlog,
+  handleGetMyBlogs,
 };

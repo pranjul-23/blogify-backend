@@ -18,17 +18,16 @@ const blogSchema = new Schema(
       type: String,
       required: true,
     },
-    // author: {
-    //   type: String,
-    //   required: true,
-    // },
-    // authorImage: {
-    //   type: String,
-    // },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
   },
   { timestamps: true },
 );
 
-const Blogs = model("blogs", blogSchema);
+const Blog = model("Blog", blogSchema);
 
-module.exports = Blogs;
+module.exports = Blog;

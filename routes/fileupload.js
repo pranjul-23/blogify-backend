@@ -15,7 +15,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: multer.memoryStorage(),
   fileFilter: fileFilter,
-  limits: { fileSize: 1024 * 1024 * 2 }, // 1MB limit
+  limits: { fileSize: 1024 * 1024 * 1 }, // 1MB limit
 });
 
 router.post("/upload", (req, res) => {

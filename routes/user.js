@@ -1,17 +1,17 @@
 const { Router } = require("express");
-const { handleUserSignup, handleUserLogin } = require("../controllers/user");
+const { checkAuthentication } = require("../middlewares");
+const {
+  handleUserSignup,
+  handleUserLogin,
+  getCurrentUser,
+  handleUserLogout,
+} = require("../controllers/user");
 
 const router = Router();
 
-router.get("/login", (req, res) => {
-  return res.render("login");
-});
-
-router.get("/signup", (req, res) => {
-  return res.render("signup");
-});
-
 router.post("/signup", handleUserSignup);
 router.post("/login", handleUserLogin);
+router.get("/current-user", checkAuthentication, getCurrentUser);
+router.post("/logout", handleUserLogout);
 
 module.exports = router;

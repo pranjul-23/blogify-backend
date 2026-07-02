@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 // const { connectMongoDB } = require("./connection");
 const path = require("path");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const { connectMongoDB } = require("./connection");
 const PORT = process.env.PORT;
 const MongoDB_URL = process.env.MongoDB_URL;
@@ -26,6 +27,7 @@ app.use(
   }),
 );
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(logReqRes("log.txt"));
 
@@ -38,7 +40,7 @@ app.get("/", (req, res) => {
   res.render("home");
 });
 app.use("/api/blogs", blogRouter);
-app.use("/user", userRouter);
+app.use("/api/user", userRouter);
 app.use("/api/file", fileRouter);
 
 app.listen(PORT, () => console.log(`Server Started at PORT: ${PORT}`));

@@ -1,8 +1,8 @@
 const { PutObjectCommand } = require("@aws-sdk/client-s3");
 const s3 = require("../config/s3");
 
-async function uploadToS3(file) {
-  const key = `blogs/${Date.now()}-${file.originalname}`;
+async function uploadToS3(folder, file) {
+  const key = `${folder}/${Date.now()}-${file.originalname}`;
 
   await s3.send(
     new PutObjectCommand({

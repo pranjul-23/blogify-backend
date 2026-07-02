@@ -21,9 +21,9 @@ const userSchema = new Schema(
       required: true,
       unique: true,
     },
-    profileImageURL: {
+    profileImage: {
       type: String,
-      default: "/images/default.svg",
+      default: "",
     },
     role: {
       type: String,
@@ -67,6 +67,6 @@ userSchema.static(
   },
 );
 
-const User = model("user", userSchema);
+const User = model("User", userSchema);
 
 module.exports = User;
