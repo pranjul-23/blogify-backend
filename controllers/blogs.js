@@ -134,6 +134,14 @@ const handleUpdateBlog = async (req, res) => {
         message: "Blog not found.",
       });
     }
+
+    if (blog.createdBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to edit this blog.",
+      });
+    }
+
     blog.title = title;
     blog.description = description;
     blog.blogImage = blogImage;
@@ -182,9 +190,11 @@ const handleDeleteBlog = async (req, res) => {
 
 const handleGetMyBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find({ createdBy: req.user._id }).sort({
-      createdAt: -1,
-    });
+    const blogs = await Blog.find({ createdBy: req.user._id })
+      .populate("createdBy", "fullName profileImage")
+      .sort({
+        createdAt: -1,
+      });
     return res.status(200).json({
       success: true,
       message: "Blogs fetched successfully",
