@@ -1,17 +1,17 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
-// const { connectMongoDB } = require("./connection");
-const path = require("path");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { connectMongoDB } = require("./connection");
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8000;
 const MongoDB_URL = process.env.MongoDB_URL;
 
 connectMongoDB(MongoDB_URL)
   .then(() => console.log("Connected MongoDB"))
-  .catch((err) => console.log("Error connecting MongoDB", err));
+  .catch((err) => {
+    console.error("Error connecting MongoDB", err);
+    process.exit(1);
+  });
 
 const blogRouter = require("./routes/blogs");
 const userRouter = require("./routes/user");
@@ -31,16 +31,30 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(logReqRes("log.txt"));
 
-app.set("view engine", "ejs");
-app.set("views", path.resolve("./views"));
-
 // Routes
 
 app.get("/", (req, res) => {
-  res.render("home");
+  res.json({
+    message: "Blogify API is running",
+  });
 });
 app.use("/api/blogs", blogRouter);
 app.use("/api/user", userRouter);
 app.use("/api/file", fileRouter);
+
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+  });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+  });
+});
 
 app.listen(PORT, () => console.log(`Server Started at PORT: ${PORT}`));
