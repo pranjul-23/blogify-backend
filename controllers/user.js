@@ -59,6 +59,7 @@ async function handleUserLogin(req, res) {
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: "/",
       })
       .status(200)
       .json({
@@ -99,6 +100,7 @@ async function handleUserLogout(req, res) {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
+        path: "/",
       })
       .status(200)
       .json({
