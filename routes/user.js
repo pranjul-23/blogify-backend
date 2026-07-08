@@ -4,7 +4,7 @@ const {
   handleUserSignup,
   handleUserLogin,
   getCurrentUser,
-  handleUserLogout,
+  // handleUserLogout,
 } = require("../controllers/user");
 
 const router = Router();
@@ -12,6 +12,6 @@ const router = Router();
 router.post("/signup", handleUserSignup);
 router.post("/login", handleUserLogin);
 router.get("/current-user", checkAuthentication, getCurrentUser);
-router.post("/logout", handleUserLogout);
+// router.post("/logout", handleUserLogout);
 
 module.exports = router;

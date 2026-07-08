@@ -53,20 +53,23 @@ async function handleUserLogin(req, res) {
     }
 
     const token = await User.matchPasswordAndGenrateToken(email, password);
-    return res
-      .cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        path: "/",
-      })
-      .status(200)
-      .json({
-        success: true,
-        message: "Login successful.",
-        data: null,
-      });
+    return (
+      res
+        // .cookie("token", token, {
+        //   httpOnly: true,
+        //   secure: process.env.NODE_ENV === "production",
+        //   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        //   maxAge: 7 * 24 * 60 * 60 * 1000,
+        //   path: "/",
+        // })
+        .status(200)
+        .json({
+          success: true,
+          message: "Login successful.",
+          token,
+          data: null,
+        })
+    );
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -93,34 +96,34 @@ async function getCurrentUser(req, res) {
   }
 }
 
-async function handleUserLogout(req, res) {
-  try {
-    return res
-      .clearCookie("token", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-      })
-      .status(200)
-      .json({
-        success: true,
-        message: "Logout successful.",
-        data: null,
-      });
-  } catch (error) {
-    console.error(error);
+// async function handleUserLogout(req, res) {
+//   try {
+//     return res
+//       .clearCookie("token", {
+//         httpOnly: true,
+//         secure: process.env.NODE_ENV === "production",
+//         sameSite: "lax",
+//         path: "/",
+//       })
+//       .status(200)
+//       .json({
+//         success: true,
+//         message: "Logout successful.",
+//         data: null,
+//       });
+//   } catch (error) {
+//     console.error(error);
 
-    return res.status(500).json({
-      success: false,
-      message: error.message || "Internal server error.",
-    });
-  }
-}
+//     return res.status(500).json({
+//       success: false,
+//       message: error.message || "Internal server error.",
+//     });
+//   }
+// }
 
 module.exports = {
   handleUserSignup,
   handleUserLogin,
   getCurrentUser,
-  handleUserLogout,
+  // handleUserLogout,
 };
